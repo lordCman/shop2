@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class = "text-center"> Your Cart</h1>
+{% if not items %}
+<h3 class="text-center">Empty Cart:(</h3>
+{% else %}
+<a href="{{ url_for('shop.remAll') }}" class="btn btn-danger text-right">Remove All Items From Cart</a>
+{% endif %}
+
+    <div class = "img-fluid" style="background-image: url('https://img.freepik.com/free-vector/sports-shoes-set-fashion-sportwear-everyday-sneaker-footwear-clothing_1284-42113.jpg?w=2000');">
+    {% for i in items %}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src=" {{i.item_url}}" class="img-fluid rounded-start" alt="">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{ i.item }}</h5>
+                  <p class="card-text">${{ i.price }}</p>
+              <a href="{{ url_for('shop.removeItem', item_id = i.id) }}" class="btn btn-danger">Remove From Cart</a>
+              
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+
+    {% endfor %}
+    </div>
+      <h2 class=""> total items in cart: {{ total }}</h2>
+      <h2 class="">Estimated Cost: {{ prices }}</h2>
+      <a href="{{ url_for('shop.checkout')}}" class="btn btn-success">Checkout Now!</a>
+{% if flag %}
+<div class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Checkout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Checkout</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+
+{% endif %}
+{% endblock %}

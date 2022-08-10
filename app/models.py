@@ -20,6 +20,11 @@ user_pokemon = db.Table('user_pokemon',
     db.Column('pokemon_id', db.Integer, db.ForeignKey('pokemon.id')),
 )
 
+cart = db.Table('carts',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('shopitems.id', db.Integer, db.ForeignKey('shopitems.id'))
+)
+
 # create our Models based off of our ERD
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -39,7 +44,11 @@ class User(db.Model, UserMixin):
         backref='trainers',
         lazy = 'dynamic'
     )
-
+    carts = db.relationship("Shopitems",
+        secondary = cart,
+        backref = 'users_cart',
+        lazy = 'dynamic'
+    )
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
@@ -62,6 +71,15 @@ class User(db.Model, UserMixin):
     
     def saveToDB(self):
         db.session.commit()
+
+    def addToCart(self,item):
+        self.carts.append(item)
+        db.session.commit()
+    
+    def removeFromCart(self, item):
+        self.carts.remove(item)
+        db.session.commit()
+        
 
     # get all the posts that I am following PLUS my own
     def get_followed_posts(self):
@@ -124,6 +142,8 @@ class Post(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -134,3 +154,17 @@ class Post(db.Model):
             'user_id': self.user_id,
             'author': self.author.username
         }
+
+
+
+class Shopitems(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    item = db.Column(db.String(150), nullable=False)
+    item_url = db.Column(db.String(300), nullable = False)
+    price = db.Column(db.String(300), nullable = False)
+
+    def __init__(self, item, item_url, price):
+        self.item = item
+        self.item_url = item_url
+        self.price = price
+

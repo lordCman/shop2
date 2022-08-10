@@ -24,7 +24,6 @@ def logMeIn():
             password = form.password.data
             # Query user based off of username
             user = User.query.filter_by(username=username).first()
-            print(user.username, user.password, user.id)
             if user:
                 # compare passwords
                 if check_password_hash(user.password, password):
